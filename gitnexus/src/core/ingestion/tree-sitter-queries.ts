@@ -1065,7 +1065,7 @@ export const DART_QUERIES = `
 (expression_statement
   (selector
     (unconditional_assignable_selector
-      (identifier) @call.name))
+      (identifier) @call.name)) .
   (selector
     (argument_part))) @call
 
@@ -1073,7 +1073,7 @@ export const DART_QUERIES = `
 (return_statement
   (selector
     (unconditional_assignable_selector
-      (identifier) @call.name))
+      (identifier) @call.name)) .
   (selector
     (argument_part))) @call
 
@@ -1081,7 +1081,7 @@ export const DART_QUERIES = `
 (initialized_variable_definition
   value: (selector
     (unconditional_assignable_selector
-      (identifier) @call.name))
+      (identifier) @call.name)) .
   value: (selector
     (argument_part))) @call
 
