@@ -1026,19 +1026,19 @@ export const DART_QUERIES = `
 ; ── Top-level functions ──────────────────────────────────────────────────────
 (program
   (function_signature
-    name: (identifier) @name)) @definition.function
+    name: (identifier) @name) @definition.function)
 
 ; ── Methods (in classes) ─────────────────────────────────────────────────────
 (class_body
   (method_signature
     (function_signature
-      name: (identifier) @name))) @definition.method
+      name: (identifier) @name)) @definition.method)
 
 ; ── Methods (in extensions) ──────────────────────────────────────────────────
 (extension_body
   (method_signature
     (function_signature
-      name: (identifier) @name))) @definition.method
+      name: (identifier) @name)) @definition.method)
 
 ; ── Imports ──────────────────────────────────────────────────────────────────
 (import_or_export
@@ -1061,9 +1061,29 @@ export const DART_QUERIES = `
   (selector
     (argument_part))) @call
 
-; ── Method calls: obj.method(args), ClassName.staticMethod(args) ─────────────
-(unconditional_assignable_selector
-  (identifier) @call.name)
+; ── Method calls: obj.method(args) in expression statements ──────────────────
+(expression_statement
+  (selector
+    (unconditional_assignable_selector
+      (identifier) @call.name))
+  (selector
+    (argument_part))) @call
+
+; ── Method calls in return statements: return obj.method(args) ───────────────
+(return_statement
+  (selector
+    (unconditional_assignable_selector
+      (identifier) @call.name))
+  (selector
+    (argument_part))) @call
+
+; ── Method calls in variable assignments: var x = obj.method(args) ───────────
+(initialized_variable_definition
+  value: (selector
+    (unconditional_assignable_selector
+      (identifier) @call.name))
+  value: (selector
+    (argument_part))) @call
 
 ; ── Calls in return statements: return foo(args) ─────────────────────────────
 (return_statement
@@ -1076,6 +1096,22 @@ export const DART_QUERIES = `
   value: (identifier) @call.name
   value: (selector
     (argument_part))) @call
+
+; ── Write access: obj.field = value ──────────────────────────────────────────
+(assignment_expression
+  left: (assignable_expression
+    (identifier) @assignment.receiver
+    (unconditional_assignable_selector
+      (identifier) @assignment.property))
+  right: (_)) @assignment
+
+; ── Write access: this.field = value ─────────────────────────────────────────
+(assignment_expression
+  left: (assignable_expression
+    (this) @assignment.receiver
+    (unconditional_assignable_selector
+      (identifier) @assignment.property))
+  right: (_)) @assignment
 
 ; ── Heritage: extends ────────────────────────────────────────────────────────
 (class_definition
@@ -1094,5 +1130,5 @@ export const DART_QUERIES = `
   name: (identifier) @heritage.class
   superclass: (superclass
     (mixins
-      (type_identifier) @heritage.implements))) @heritage.mixin
+      (type_identifier) @heritage.extends))) @heritage.mixin
 `;

@@ -439,6 +439,34 @@ export const extractFunctionName = (node: SyntaxNode): { funcName: string | null
     }
     funcName = nameNode?.text;
     label = 'Method';
+  } else if (node.type === 'function_signature') {
+    // Dart: top-level function signatures
+    let nameNode = node.childForFieldName?.('name');
+    if (!nameNode) {
+      for (let i = 0; i < node.childCount; i++) {
+        const c = node.child(i);
+        if (c?.type === 'identifier') { nameNode = c; break; }
+      }
+    }
+    funcName = nameNode?.text ?? null;
+  } else if (node.type === 'method_signature') {
+    // Dart: method_signature wraps function_signature
+    let funcSig: SyntaxNode | null = null;
+    for (let i = 0; i < node.childCount; i++) {
+      const c = node.child(i);
+      if (c?.type === 'function_signature') { funcSig = c; break; }
+    }
+    if (funcSig) {
+      let nameNode = funcSig.childForFieldName?.('name');
+      if (!nameNode) {
+        for (let i = 0; i < funcSig.childCount; i++) {
+          const c = funcSig.child(i);
+          if (c?.type === 'identifier') { nameNode = c; break; }
+        }
+      }
+      funcName = nameNode?.text ?? null;
+    }
+    label = 'Method';
   }
 
   return { funcName, label };

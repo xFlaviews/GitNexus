@@ -116,7 +116,7 @@ function parseDartRHS(node: SyntaxNode): DartRHS {
 
 /** Check if an initialized_variable_definition has an explicit type annotation. */
 function hasDartTypeAnnotation(node: SyntaxNode): boolean {
-  return !!findChild(node, 'type_identifier');
+  return !!findChild(node, 'type_identifier') || !!findChild(node, 'function_type');
 }
 
 // ── Tier 0: Explicit Type Annotations ───────────────────────────────────
@@ -129,6 +129,21 @@ function hasDartTypeAnnotation(node: SyntaxNode): boolean {
  * so childForFieldName('type') returns null.
  */
 const extractDartDeclaration: TypeBindingExtractor = (node: SyntaxNode, env: Map<string, string>): void => {
+  // initialized_identifier: comma-separated variable (String a, b, c) — type is on parent
+  if (node.type === 'initialized_identifier') {
+    const parent = node.parent;
+    if (!parent) return;
+    const typeNode = findChild(parent, 'type_identifier');
+    if (!typeNode) return;
+    const typeName = extractSimpleTypeName(typeNode);
+    if (!typeName || typeName === 'dynamic') return;
+    const nameNode = findChild(node, 'identifier');
+    if (!nameNode) return;
+    const varName = extractVarName(nameNode);
+    if (varName) env.set(varName, typeName);
+    return;
+  }
+
   const typeNode = findChild(node, 'type_identifier');
   if (!typeNode) return; // var/final without type — skip (Tier 1 handles these)
   const typeName = extractSimpleTypeName(typeNode);
