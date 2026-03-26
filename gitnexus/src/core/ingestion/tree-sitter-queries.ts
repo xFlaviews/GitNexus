@@ -1057,7 +1057,7 @@ export const DART_QUERIES = `
 
 ; ── Function calls: direct calls like foo(args) ──────────────────────────────
 (expression_statement
-  (identifier) @call.name
+  (identifier) @call.name .
   (selector
     (argument_part))) @call
 
@@ -1087,13 +1087,13 @@ export const DART_QUERIES = `
 
 ; ── Calls in return statements: return foo(args) ─────────────────────────────
 (return_statement
-  (identifier) @call.name
+  (identifier) @call.name .
   (selector
     (argument_part))) @call
 
 ; ── Calls in variable assignments: var x = foo(args) ─────────────────────────
 (initialized_variable_definition
-  value: (identifier) @call.name
+  value: (identifier) @call.name .
   value: (selector
     (argument_part))) @call
 

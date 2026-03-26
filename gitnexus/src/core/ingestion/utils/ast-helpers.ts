@@ -508,6 +508,7 @@ export const extractMethodSignature = (node: SyntaxNode | null | undefined): Met
   const paramListTypes = new Set([
     'formal_parameters', 'parameters', 'parameter_list',
     'function_parameters', 'method_parameters', 'function_value_parameters',
+    'formal_parameter_list', // Dart
   ]);
 
   // Node types that indicate variadic/rest parameters

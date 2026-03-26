@@ -116,7 +116,7 @@ function parseDartRHS(node: SyntaxNode): DartRHS {
 
 /** Check if an initialized_variable_definition has an explicit type annotation. */
 function hasDartTypeAnnotation(node: SyntaxNode): boolean {
-  return !!findChild(node, 'type_identifier') || !!findChild(node, 'function_type');
+  return !!findChild(node, 'type_identifier');
 }
 
 // ── Tier 0: Explicit Type Annotations ───────────────────────────────────
